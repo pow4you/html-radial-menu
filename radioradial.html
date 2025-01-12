@@ -1,0 +1,205 @@
+<html>
+<!DOCTYPE html>
+
+<head>
+    <style>
+        :root{
+            background-color: #f5d7f9;
+        }
+        
+        .menu-container{
+            width: 100vw;
+            height: 100vh;
+            
+            position: relative;
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .title {
+            width: 15rem;
+            text-align: center;
+            font-size: 2rem;
+            
+            color: #3541df;
+        }
+    
+    
+        .radial-wrapper {
+            width: 15rem;
+            height: 15rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        .circle-wrapper {
+            width: 11rem;
+            height: 11rem;
+            border-radius: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            transition: scale 155ms linear, rotate 333ms ease;
+            
+            border: 0.75rem solid #f36af6 ;
+            
+            scale: 1;
+        }
+        
+        .center {
+            color: #f5d7f9;
+        
+            width: 6rem;
+            height: 6rem;
+            border-radius: 100%;
+            background-color: #3541df;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            
+            border: .25rem solid #f36af6 ;
+            
+            z-index: 10;
+            
+            transition: transform 111ms ease;
+            cursor: pointer;
+        }
+        
+        .center:hover{
+            transform: scale(.95);
+        }
+        
+        .center:active{
+            transform: scale(.9);
+        }
+    
+        .circle {
+            color: #f5d7f9;
+        
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 100%;
+            background-color: #3541df;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            border: .25rem solid #f36af6 ;
+            
+            transition: transform 111ms ease;
+            
+            cursor: pointer;
+            
+            transform: scale(1);
+        }
+        
+        .circle:hover{
+            transform: scale(1.1);
+        }
+        
+        .circle:active{
+            transform: scale(1.05);
+        }
+        
+        .circle-wrapper.hidden {
+            scale: 0;
+            rotate: -60deg;
+        }
+        
+        .circle-wrapper.hidden .circle {
+            transform: scale(1.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu-container">
+        <div class="title"> Select animal </div>
+        <div id="radial1" class="radial-wrapper">
+            <div class="center"></div>
+            <div class="circle-wrapper">
+                <label class="circle"><input type="radio" name="animal" hidden value="dog">Dog</label>
+                <label class="circle"><input type="radio" name="animal" hidden value="cat">Cat</label>
+                <label class="circle"><input type="radio" name="animal" hidden value="pig">Pig</label>
+                <label class="circle"><input type="radio" name="animal" hidden value="horse">Horse</label>
+            </div>
+        </div>
+    </div>
+    
+    <div class="menu-container">
+        <div class="title"> Select gender </div>
+        <div id="radial2" class="radial-wrapper">
+            <div class="center"></div>
+            <div class="circle-wrapper">
+                <label class="circle"><input type="radio" name="gender" value="male">Male</label>
+                <label class="circle"><input type="radio" name="gender" value="female">Female</label>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class Radial {
+            constructor(element, radius) {
+                this.container = element;
+                this.radius = radius;
+                
+                this.centerElement = this.container.querySelector('.center');
+                
+                this.circlewrapper = this.container.querySelector(".circle-wrapper")
+                this.smallCircles = this.circlewrapper.querySelectorAll('.circle');
+                this.smallCircleCount = this.smallCircles.length;
+                
+                this.setInitialPosition();
+                this.centerElement.addEventListener('click', this.toggle.bind(this));
+            }
+        
+            setInitialPosition() {
+            
+                for (let i = 0; i < this.smallCircleCount; i++) {
+                    let angle = (2 * Math.PI * i) / this.smallCircleCount + (Math.PI/ this.smallCircleCount)-(Math.PI/ 2);
+                    
+                    const x = 50 + Math.cos(angle)*52;
+                    const y = 50 + Math.sin(angle)*52;
+            
+                    let circleRect = this.smallCircles[i].getBoundingClientRect();
+                    
+                    //this.smallCircles[i].style.transform = `translate( calc(${y}% - ${circleRect.width/2}px), calc(${y}% - ${circleRect.width/2}px) )`;
+                    
+                    this.smallCircles[i].style.top = `calc(${y}% - ${circleRect.width/2}px)`;
+                    this.smallCircles[i].style.left = `calc(${x}% - ${circleRect.width/2}px)`;
+                    
+                    let radio = this.smallCircles[i].querySelector("input");
+                    
+                    radio.addEventListener('click', this.revalue.bind(this));
+
+                }
+                this.toggle();
+            }
+            
+            revalue(event) {
+                console.log(event.target)
+                this.centerElement.innerHTML = event.target.innerText;
+                this.toggle();
+            }
+        
+            toggle() {
+                this.circlewrapper.classList.toggle('hidden');
+            }
+        }
+        const wrapper1 = new Radial(
+            document.getElementById("radial1")
+        );
+        const wrapper2 = new Radial(
+            document.getElementById("radial2")
+        );
+    </script>
+</body>
+
+</html>
